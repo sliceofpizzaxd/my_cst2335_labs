@@ -131,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Checkbox(value: isChecked, onChanged: (newValue) { setState(() {
               isChecked = newValue!;
             });}),
+            Switch(value:isChecked, onChanged: (newValue) {  setState(() { isChecked = newValue; });}),
           ],
         ),
       ),
