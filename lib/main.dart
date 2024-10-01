@@ -57,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0.0;
   var myFontSize = 30.0;
+  var isChecked = false;
 
   void setNewValue(double value) {
     setState(() {
@@ -118,12 +119,15 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
               style:TextStyle( fontSize:myFontSize ),
             ),
-            Image.asset("images/algonquin.jpg", width: 200, height: 200),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Slider(value: _counter, onChanged: setNewValue, min: 0.0, max: 100.0)
+            Slider(value: _counter, onChanged: setNewValue, min: 0.0, max: 100.0),
+            ElevatedButton(
+                onPressed: () { print("Pressed"); },
+                child: Image.asset("images/algonquin.jpg", width: 200, height: 200),
+            ),
           ],
         ),
       ),
