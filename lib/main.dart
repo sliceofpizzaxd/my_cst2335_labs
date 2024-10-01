@@ -58,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0.0;
   var myFontSize = 30.0;
   var isChecked = false;
+  late TextEditingController _controller;
 
   void setNewValue(double value) {
     setState(() {
@@ -73,9 +74,22 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      if(_counter < 100)
-        _counter++;
+      if(_counter > 99)
+        _counter = 100;
+      else _counter++;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -123,9 +137,19 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            Image.asset("images/algonquin.jpg", width: 200, height: 200),
+            TextField(controller: _controller,
+              decoration: InputDecoration(
+                hintText: "Type here",
+                border: OutlineInputBorder(),
+                labelText: "First name"
+              )),
             Slider(value: _counter, onChanged: setNewValue, min: 0.0, max: 100.0),
             ElevatedButton(
-                onPressed: () { print("Pressed"); },
+                onPressed: () {
+                  print(_controller.text);
+                  _controller.text = "nom";
+                },
                 child: Image.asset("images/algonquin.jpg", width: 200, height: 200),
             ),
             Checkbox(value: isChecked, onChanged: (newValue) { setState(() {
