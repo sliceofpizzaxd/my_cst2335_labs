@@ -128,6 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () { print("Pressed"); },
                 child: Image.asset("images/algonquin.jpg", width: 200, height: 200),
             ),
+            Checkbox(value: isChecked, onChanged: (newValue) { setState(() {
+              isChecked = newValue!;
+            });}),
           ],
         ),
       ),
