@@ -58,27 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   var _counter = 0.0;
   var myFontSize = 30.0;
 
-  void setNewValue(double value) {
-    setState(() {
-      _counter = value;
-      myFontSize = value;
-    });
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      // ensure counter does not exceed 100 and cause a crash
-      if(_counter > 99)
-        _counter = 100;
-      else _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -116,24 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-              style:TextStyle( fontSize:myFontSize ),
-            ),
-            Image.asset("images/algonquin.jpg", width: 200, height: 200),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Slider(value: _counter, onChanged: setNewValue, min: 0.0, max: 100.0)
+            ElevatedButton(onPressed: () {}, child: Text('Button 1')),
+            ElevatedButton(onPressed: () {}, child: Text('Button 2')),
+            ElevatedButton(onPressed: () {}, child: Text('Button 3')),
+            ElevatedButton(onPressed: () {}, child: Text('Button 4')),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
