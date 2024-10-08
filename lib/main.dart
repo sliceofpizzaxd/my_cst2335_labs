@@ -55,25 +55,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _counter = 0.0;
-  var myFontSize = 30.0;
+  late TextEditingController userTextController, passTextController;
+  var imageSource = "images/question-mark.png";
 
-  void setNewValue(double value) {
-    setState(() {
-      _counter = value;
-      myFontSize = value;
-    });
+  @override
+  void initState() {
+    super.initState();
+    userTextController = TextEditingController();
+    passTextController = TextEditingController();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void dispose() {
+    userTextController.dispose();
+    passTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -113,23 +109,29 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-              style:TextStyle( fontSize:myFontSize ),
+            TextField(controller: userTextController,
+              decoration: InputDecoration(
+                hintText: "Login",
+                border: OutlineInputBorder(),
+              )
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            TextField(controller: passTextController,
+              decoration: InputDecoration(
+                  hintText: "Password",
+                  border: OutlineInputBorder(),
+              ),
+              obscureText: true
             ),
-            Slider(value: _counter, onChanged: setNewValue, min: 0.0, max: 100.0)
+            ElevatedButton(onPressed: () {
+              setState(() {
+                imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
+              });
+            }, child: Text('Login', style:TextStyle(fontSize:20, color:Colors.blue))),
+            Image.asset(imageSource)
+
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
