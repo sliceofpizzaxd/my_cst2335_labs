@@ -57,7 +57,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var myFontSize = 30.0;
+  Stack centeredTextImage(String filename, String text) {
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: <Widget>[
+        CircleAvatar(backgroundImage: AssetImage('images/$filename'), radius: 100,),
+        Text(text, style: const TextStyle(
+            color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold))
+      ],
+    );
+  }
 
+  Stack bottomTextImage(String filename, String text) {
+    return Stack(
+      alignment: AlignmentDirectional.bottomCenter,
+      children: <Widget>[
+        CircleAvatar(backgroundImage: AssetImage('images/$filename'), radius: 100,),
+        Text(text, style: const TextStyle(
+            fontSize: 25))
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -67,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
@@ -75,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-      ),
+      ),*/
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -93,12 +113,42 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            ElevatedButton(onPressed: () {}, child: Text('Button 1')),
-            ElevatedButton(onPressed: () {}, child: Text('Button 2')),
-            ElevatedButton(onPressed: () {}, child: Text('Button 3')),
-            ElevatedButton(onPressed: () {}, child: Text('Button 4')),
+            const Text('BROWSE CATEGORIES', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+            const Text('Not sure about exactly which recipe you\'re looking for? '
+                'Do a search, or dive into our most popular categories.',
+            style: TextStyle(fontSize: 20)),
+            const Text('BY MEAT', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                centeredTextImage('raw-beef.jpeg', 'BEEF'),
+                centeredTextImage('chicken.jpg', 'CHICKEN'),
+                centeredTextImage('pork.jpg', 'PORK'),
+                centeredTextImage('seafood.jpg', 'SEAFOOD'),
+              ],
+            ),
+            const Text('BY COURSE', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                bottomTextImage('main_dishes.jpg', 'Main Dishes'),
+                bottomTextImage('salad.jpg', 'Salad Recipes'),
+                bottomTextImage('side_dishes.jpg', 'Side Dishes'),
+                bottomTextImage('crockpot.jpg', 'CROCKPOT'),
+              ],
+            ),
+            const Text('BY DESSERT', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                bottomTextImage('ice-cream.jpg', 'Ice Cream'),
+                bottomTextImage('brownies.jpg', 'Brownies'),
+                bottomTextImage('pies.jpg', 'Pies'),
+                bottomTextImage('cookies.jpg', 'Cookies'),
+              ],
+            ),
           ],
         ),
       ),
