@@ -129,6 +129,21 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
               });
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Save credentials?'),
+                  content: Text('Save login name and password for user ' + userTextController.value.text + '?'),
+                  actions: <Widget>[
+                    ElevatedButton(onPressed: () {
+                      // shared preferences
+                    }, child: Text('Save')),
+                    ElevatedButton(onPressed: (){
+                      Navigator.pop(context);
+                    }, child: Text("Don't save"))
+                  ]
+                )
+              );
             }, child: Text('Login', style:TextStyle(fontSize:20, color:Colors.blue))),
             Image.asset(imageSource)
 
