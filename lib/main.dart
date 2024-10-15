@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     passTextController = TextEditingController();
   }
 
+
   @override
   void dispose() {
     userTextController.dispose();
@@ -115,12 +116,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 border: OutlineInputBorder(),
               )
             ),
+
             TextField(controller: passTextController,
               decoration: InputDecoration(
                   hintText: "Password",
                   border: OutlineInputBorder(),
               ),
               obscureText: true
+
             ),
             ElevatedButton(onPressed: () {
               setState(() {
