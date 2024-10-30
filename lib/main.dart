@@ -1,4 +1,6 @@
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,6 +65,23 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     userTextController = TextEditingController();
     passTextController = TextEditingController();
+    EncryptedSharedPreferences().getInstance().then((prefs) {
+      var username = prefs.getString("username");
+      var password = prefs.getString("password");
+      if(username != null && password != null) {
+        userTextController.text = username;
+        passTextController.text = password;
+        if(context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Username and password loaded"),
+            action: SnackBarAction(label: 'Undo', onPressed: () {
+              userTextController.text = '';
+              passTextController.text = '';
+            })
+          ));
+        }
+      }
+    });
   }
 
 
@@ -125,19 +144,29 @@ class _MyHomePageState extends State<MyHomePage> {
               obscureText: true
 
             ),
+            // Login button
             ElevatedButton(onPressed: () {
+              // set image depending on whether password is right or wrong
               setState(() {
                 imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
               });
+              // Alert dialog prompting user to save credentials
               showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
                   title: const Text('Save credentials?'),
-                  content: Text('Save login name and password for user ' + userTextController.value.text + '?'),
+                  content: Text('Save login name and password for user ${userTextController.value.text}?'),
                   actions: <Widget>[
+                    // save preferences
                     ElevatedButton(onPressed: () {
-                      // shared preferences
+                      EncryptedSharedPreferences().getInstance().then((prefs) {
+                        prefs.setString("username", userTextController.value.text);
+                        prefs.setString("password", passTextController.value.text);
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password saved")));
                     }, child: Text('Save')),
+                    // do not save preferences
                     ElevatedButton(onPressed: (){
                       Navigator.pop(context);
                     }, child: Text("Don't save"))
