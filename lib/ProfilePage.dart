@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_cst2335_labs/DataRepository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   State<ProfilePage> createState() => ProfilePageState();
 }
@@ -81,11 +82,21 @@ class ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(onPressed: () {
                   canLaunchUrl(Uri.parse("tel: ${phoneNumberTextController.text}")).then(
                       (can) {
-                        if(can) {
+                        if(can) { // launch phone app with number if device supports it
                           launchUrl(Uri.parse("tel: ${phoneNumberTextController.text}"));
-                        } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("cannot make phone calls from this device")));
+                        } else if (context.mounted) { // show error dialog if not
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text("Error"),
+                              content: const Text("Cannot make phone calls from this device!"),
+                              actions: <Widget>[
+                                ElevatedButton(onPressed: () {
+                                  Navigator.pop(context);
+                                }, child: const Text("OK"))
+                              ],
+                            )
+                          );
                         }
                       }
                   );
@@ -94,11 +105,21 @@ class ProfilePageState extends State<ProfilePage> {
                 ElevatedButton(onPressed: () {
                   canLaunchUrl(Uri.parse("sms: ${phoneNumberTextController.text}")).then(
                       (can) {
-                        if(can) {
+                        if(can) { // launch sms app with phone number if device supports it
                           launchUrl(Uri.parse("sms: ${phoneNumberTextController.text}"));
-                        } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("cannot send texts from this device")));
+                        } else if (context.mounted) { // show error dialog if not
+                          showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text("Error"),
+                                content: const Text("Cannot send texts from this device"),
+                                actions: <Widget>[
+                                  ElevatedButton(onPressed: () { // button to dismiss dialog
+                                    Navigator.pop(context);
+                                  }, child: const Text("OK"))
+                                ],
+                              )
+                          );
                         }
                       }
                   );
@@ -116,13 +137,24 @@ class ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 ElevatedButton(onPressed: () {
+                  // you know the drill
                   canLaunchUrl(Uri.parse("mailto: ${emailTextController.text}")).then(
-                          (can) {
+                      (can) {
                         if(can) {
                           launchUrl(Uri.parse("mailto: ${emailTextController.text}?"));
                         } else if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("cannot send emails from this device")));
+                          showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text("Error"),
+                                content: const Text("Cannot send emails from this device"),
+                                actions: <Widget>[
+                                  ElevatedButton(onPressed: () {
+                                    Navigator.pop(context);
+                                  }, child: const Text("OK"))
+                                ],
+                              )
+                          );
                         }
                       }
                   );
