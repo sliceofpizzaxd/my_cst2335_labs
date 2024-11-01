@@ -1,6 +1,9 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:my_cst2335_labs/DataRepository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ProfilePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +17,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      initialRoute: '/',
+      routes: {
+        '/profilePage': (context) => ProfilePage()
+      }, // routes
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -63,14 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    DataRepository.loadData();
     userTextController = TextEditingController();
     passTextController = TextEditingController();
+    // Load saved username and password into input fields
     EncryptedSharedPreferences().getInstance().then((prefs) {
       var username = prefs.getString("username");
       var password = prefs.getString("password");
       if(username != null && password != null) {
         userTextController.text = username;
         passTextController.text = password;
+        // Show snackbar to let user clear the input username and password
+        // fields after loading while keeping them saved on disk
         if(context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Username and password loaded"),
@@ -147,9 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
             // Login button
             ElevatedButton(onPressed: () {
               // set image depending on whether password is right or wrong
-              setState(() {
-                imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
-              });
+              /*setState(() {
+                //imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
+              });*/
+              if(passTextController.value.text == "QWERTY123") {
+                DataRepository.username = userTextController.value.text;
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:Text("Welcome Back, ${DataRepository.username}")));
+                Navigator.pushNamed(context, '/profilePage');
+              }
               // Alert dialog prompting user to save credentials
               showDialog<String>(
                 context: context,
