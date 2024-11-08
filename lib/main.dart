@@ -129,10 +129,32 @@ class _MyHomePageState extends State<MyHomePage> {
                 ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, rowNum) =>
-                      Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
+                  GestureDetector(
+                    child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
                           Text("Item $rowNum:"), Text(items[rowNum])
-                      ])
+                        ]),
+                    onLongPress: () {
+                      showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text("Delete item?"),
+                            content: Text(items[rowNum]),
+                            actions: <Widget>[
+                              ElevatedButton(onPressed: () {
+                                setState(() {
+                                  items.removeAt(rowNum);
+                                  Navigator.pop(context);
+                                });
+                              }, child: const Text("Yes")),
+                              ElevatedButton(onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                  child: const Text("No"))
+                            ],
+                          ));
+                    },
+                  )
                 )
             )
           ],
