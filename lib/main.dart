@@ -55,21 +55,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late TextEditingController userTextController, passTextController;
-  var imageSource = "images/question-mark.png";
+  late TextEditingController textController;
+  List<String> items = [];
 
   @override
   void initState() {
     super.initState();
-    userTextController = TextEditingController();
-    passTextController = TextEditingController();
+    textController = TextEditingController();
   }
 
 
   @override
   void dispose() {
-    userTextController.dispose();
-    passTextController.dispose();
+    textController.dispose();
     super.dispose();
   }
 
@@ -110,28 +108,33 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(controller: userTextController,
-              decoration: InputDecoration(
-                hintText: "Login",
-                border: OutlineInputBorder(),
-              )
+            Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                // Button to add content of text field
+                ElevatedButton(onPressed: () {
+                  setState(() {
+                    items.add(textController.text);
+                    textController.text = "";
+                  });
+                }, child: const Text("Add")),
+                Expanded(child: TextField(controller: textController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter a search term",
+                      border: OutlineInputBorder()
+                    ),
+                ))
+              ],
             ),
-
-            TextField(controller: passTextController,
-              decoration: InputDecoration(
-                  hintText: "Password",
-                  border: OutlineInputBorder(),
-              ),
-              obscureText: true
-
-            ),
-            ElevatedButton(onPressed: () {
-              setState(() {
-                imageSource = (passTextController.value.text == "QWERTY123" ? "images/idea.png" : "images/stop.png");
-              });
-            }, child: Text('Login', style:TextStyle(fontSize:20, color:Colors.blue))),
-            Image.asset(imageSource)
-
+            Expanded(child:
+                ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, rowNum) =>
+                      Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                          Text("Item $rowNum:"), Text(items[rowNum])
+                      ])
+                )
+            )
           ],
         ),
       ),
