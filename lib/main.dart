@@ -117,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     textController.text = "";
                   });
                 }, child: const Text("Add")),
+                // Field for text input
                 Expanded(child: TextField(controller: textController,
                     decoration: const InputDecoration(
                       hintText: "Enter a search term",
@@ -126,14 +127,19 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             Expanded(child:
+                // If to-do list is empty, display appropriate text. Otherwise, display list
+                items.isEmpty ? const Text("There are no items in the list") :
                 ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, rowNum) =>
+                  // Uses gesture detector for item deletion
                   GestureDetector(
+                    // Entry in list
                     child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Text("Item $rowNum:"), Text(items[rowNum])
                         ]),
+                    // Prompt user to delete item on long press
                     onLongPress: () {
                       showDialog<String>(
                           context: context,
@@ -141,12 +147,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: const Text("Delete item?"),
                             content: Text(items[rowNum]),
                             actions: <Widget>[
+                              // Yes button (delete item)
                               ElevatedButton(onPressed: () {
                                 setState(() {
                                   items.removeAt(rowNum);
                                   Navigator.pop(context);
                                 });
                               }, child: const Text("Yes")),
+                              // No button (don't delete item)
                               ElevatedButton(onPressed: () {
                                   Navigator.pop(context);
                                 },
