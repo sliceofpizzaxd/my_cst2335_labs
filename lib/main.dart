@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_cst2335_labs/dao/ToDoDAO.dart';
+import 'package:my_cst2335_labs/dao/database.dart';
+import 'package:my_cst2335_labs/dao/ToDoEntity.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -56,14 +60,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController textController;
-  List<String> items = [];
+  List<ToDo>? items;
+  ToDoDAO? toDoDao;
 
   @override
   void initState() {
     super.initState();
     textController = TextEditingController();
+    // load to do items from database
+    $FloorAppDatabase.databaseBuilder('app_database.db').build().then((database) {
+      toDoDao = database.toDoDAO;
+      toDoDao!.getList().then((list) {
+        setState(() {
+          items = list;
+        });
+      });
+    });
   }
-
 
   @override
   void dispose() {
@@ -113,7 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Button to add content of text field
                 ElevatedButton(onPressed: () {
                   setState(() {
-                    items.add(textController.text);
+                    var item = ToDo(textController.text);
+                    items!.add(item); // add to list in memory
+                    toDoDao?.insertItem(item); // save item to database
                     textController.text = "";
                   });
                 }, child: const Text("Add")),
@@ -127,17 +142,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             Expanded(child:
-                // If to-do list is empty, display appropriate text. Otherwise, display list
-                items.isEmpty ? const Text("There are no items in the list") :
+              // If to-do list is empty, display appropriate text. Otherwise, display list
+              items == null || items!.isEmpty ? const Text("There are no items in the list") :
                 ListView.builder(
-                  itemCount: items.length,
+                  itemCount: items!.length,
                   itemBuilder: (context, rowNum) =>
                   // Uses gesture detector for item deletion
                   GestureDetector(
                     // Entry in list
                     child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          Text("Item $rowNum:"), Text(items[rowNum])
+                          Text("Item ${rowNum+1}:"), Text(items![rowNum].entry)
                         ]),
                     // Prompt user to delete item on long press
                     onLongPress: () {
@@ -145,12 +160,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             title: const Text("Delete item?"),
-                            content: Text(items[rowNum]),
+                            content: Text(items![rowNum].entry),
                             actions: <Widget>[
                               // Yes button (delete item)
                               ElevatedButton(onPressed: () {
                                 setState(() {
-                                  items.removeAt(rowNum);
+                                  toDoDao?.deleteItem(items![rowNum]); // remove item from database
+                                  items!.removeAt(rowNum); // remove item from list in memory
                                   Navigator.pop(context);
                                 });
                               }, child: const Text("Yes")),
