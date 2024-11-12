@@ -168,6 +168,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     }, child: Text('Save')),
                     // do not save preferences
                     ElevatedButton(onPressed: (){
+                      EncryptedSharedPreferences().getInstance().then((prefs) {
+                        prefs.setString("username", "");
+                        prefs.setString("password", "");
+                      });
                       Navigator.pop(context);
                     }, child: Text("Don't save"))
                   ]
