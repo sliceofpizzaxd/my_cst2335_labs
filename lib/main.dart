@@ -62,6 +62,75 @@ class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController textController;
   List<ToDo>? items;
   ToDoDAO? toDoDao;
+  ToDo? selectedItem;
+  var size, height, width;
+
+  Widget inputBox() => Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: <Widget>[
+      // Button to add content of text field
+      ElevatedButton(onPressed: () {
+        setState(() {
+          var item = ToDo(textController.text);
+          items!.add(item); // add to list in memory
+          toDoDao?.insertItem(item); // save item to database
+          textController.text = "";
+        });
+      }, child: const Text("Add")),
+      // Field for text input
+      Expanded(child: TextField(controller: textController,
+        decoration: const InputDecoration(
+            hintText: "Enter a search term",
+            border: OutlineInputBorder()
+        ),
+      ))
+    ],
+  );
+
+  Widget toDoList() => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      inputBox(),
+      Expanded(child:
+      // If to-do list is empty, display appropriate text. Otherwise, display list
+      items == null || items!.isEmpty ? const Text("There are no items in the list") :
+      ListView.builder(
+          itemCount: items!.length,
+          itemBuilder: (context, rowNum) =>
+          // Uses gesture detector for item deletion
+          GestureDetector(
+            // Entry in list
+            child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text("Item ${rowNum+1}:"), Text(items![rowNum].entry)
+                ]),
+            // select list object on tap
+            onTap: () {
+              setState(() {
+                selectedItem = items![rowNum];
+              });
+            },
+          )
+        )
+      )
+    ],
+  );
+
+  Widget detailsPage() => Column(
+    // return empty list of widgets if no item has been selected
+    children: selectedItem == null ? [] : [
+      Text("Name: ${selectedItem!.entry}"),
+      Text("ID: ${selectedItem!.id}"),
+      ElevatedButton(onPressed: () {
+
+        },
+        child: const Text("Delete",
+          style: TextStyle(
+            color: Colors.red
+          )
+        )
+      )
+    ],
+  );
 
   @override
   void initState() {
@@ -92,6 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    size = MediaQuery.of(context).size;
+    width = size.width;
+    height = size.height;
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -105,84 +177,15 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                // Button to add content of text field
-                ElevatedButton(onPressed: () {
-                  setState(() {
-                    var item = ToDo(textController.text);
-                    items!.add(item); // add to list in memory
-                    toDoDao?.insertItem(item); // save item to database
-                    textController.text = "";
-                  });
-                }, child: const Text("Add")),
-                // Field for text input
-                Expanded(child: TextField(controller: textController,
-                    decoration: const InputDecoration(
-                      hintText: "Enter a search term",
-                      border: OutlineInputBorder()
-                    ),
-                ))
-              ],
-            ),
-            Expanded(child:
-              // If to-do list is empty, display appropriate text. Otherwise, display list
-              items == null || items!.isEmpty ? const Text("There are no items in the list") :
-                ListView.builder(
-                  itemCount: items!.length,
-                  itemBuilder: (context, rowNum) =>
-                  // Uses gesture detector for item deletion
-                  GestureDetector(
-                    // Entry in list
-                    child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text("Item ${rowNum+1}:"), Text(items![rowNum].entry)
-                        ]),
-                    // Prompt user to delete item on long press
-                    onLongPress: () {
-                      showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text("Delete item?"),
-                            content: Text(items![rowNum].entry),
-                            actions: <Widget>[
-                              // Yes button (delete item)
-                              ElevatedButton(onPressed: () {
-                                setState(() {
-                                  toDoDao?.deleteItem(items![rowNum]); // remove item from database
-                                  items!.removeAt(rowNum); // remove item from list in memory
-                                  Navigator.pop(context);
-                                });
-                              }, child: const Text("Yes")),
-                              // No button (don't delete item)
-                              ElevatedButton(onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                  child: const Text("No"))
-                            ],
-                          ));
-                    },
-                  )
-                )
-            )
-          ],
-        ),
+
+        // Check if in landscape or portrait mode, and screen is wide enough for
+        // Master-Detail pattern
+        child: width > height && width > 720 ?
+            Row(children: [
+              Expanded(flex: (width/2).round(), child: toDoList()),
+              Expanded(flex: (width/2).round(), child: detailsPage())
+            ])
+            : selectedItem == null ? toDoList() : detailsPage()
       ),
     );
   }
