@@ -120,10 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
     children: selectedItem == null ? [] : [
       Text("Name: ${selectedItem!.entry}"),
       Text("ID: ${selectedItem!.id}"),
+      // Delete button, which removes an item from the database
       ElevatedButton(onPressed: () {
-
-        },
-        child: const Text("Delete",
+        setState(() {
+          toDoDao?.deleteItem(selectedItem!);
+          items!.remove(selectedItem!);
+          selectedItem = null;
+        });
+      }, child: const Text("Delete",
           style: TextStyle(
             color: Colors.red
           )
